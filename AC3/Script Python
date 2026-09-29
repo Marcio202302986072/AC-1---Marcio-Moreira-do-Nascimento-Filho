@@ -1,0 +1,113 @@
+import bpy
+import math
+
+# ---------------------------------------------------------
+# 1. LIMPEZA E CONFIGURAÇÃO DA CENA / TIMELINE
+# ---------------------------------------------------------
+bpy.context.scene.frame_start = 1
+bpy.context.scene.frame_end = 120
+
+colecao_nome = "AC03_transformacoes"
+if colecao_nome in bpy.data.collections:
+    colecao = bpy.data.collections[colecao_nome]
+else:
+    colecao = bpy.data.collections.new(colecao_nome)
+    bpy.context.scene.collection.children.link(colecao)
+
+def mover_para_colecao(obj):
+    for col in obj.users_collection:
+        col.objects.unlink(obj)
+    colecao.objects.link(obj)
+
+# ---------------------------------------------------------
+# 2. CRIAÇÃO DOS OBJETOS 2D E 3D
+# ---------------------------------------------------------
+
+# 2D - Quadrado (Será animado)
+bpy.ops.mesh.primitive_plane_add(location=(-3, 2, 0))
+quadrado = bpy.context.active_object
+quadrado.name = "obj2d_quadrado"
+mover_para_colecao(quadrado)
+
+# 2D - Triângulo
+bpy.ops.mesh.primitive_plane_add(location=(0, 2, 0))
+triangulo = bpy.context.active_object
+triangulo.name = "obj2d_triangulo"
+bpy.ops.object.mode_set(mode='EDIT')
+bpy.ops.mesh.select_all(action='DESELECT')
+bpy.ops.object.mode_set(mode='OBJECT')
+triangulo.data.vertices[3].co = triangulo.data.vertices[2].co
+mover_para_colecao(triangulo)
+
+# 2D - Círculo (CORRIGIDO: fill_type='NGON' cria a face sólida)
+bpy.ops.mesh.primitive_circle_add(fill_type='NGON', vertices=32, radius=1, location=(3, 2, 0))
+circulo = bpy.context.active_object
+circulo.name = "obj2d_circulo"
+mover_para_colecao(circulo)
+
+# 3D - Cubo (Será animado)
+bpy.ops.mesh.primitive_cube_add(location=(-3, -2, 1))
+cubo = bpy.context.active_object
+cubo.name = "obj3d_cubo"
+mover_para_colecao(cubo)
+
+# 3D - Cilindro
+bpy.ops.mesh.primitive_cylinder_add(location=(0, -2, 1))
+cilindro = bpy.context.active_object
+cilindro.name = "obj3d_cilindro"
+mover_para_colecao(cilindro)
+
+# 3D - Esfera
+bpy.ops.mesh.primitive_uv_sphere_add(location=(3, -2, 1))
+esfera = bpy.context.active_object
+esfera.name = "obj3d_esfera"
+mover_para_colecao(esfera)
+
+# ---------------------------------------------------------
+# BÔNUS (+1.0): HIERARQUIA PARENT/CHILD
+# ---------------------------------------------------------
+# Mantém a posição visual e faz o vínculo de parentesco corretamente
+circulo.parent = cilindro
+circulo.matrix_parent_inverse = cilindro.matrix_world.inverted()
+
+# ---------------------------------------------------------
+# 3. AUTOMAÇÃO DA ANIMAÇÃO VIA SCRIPT (KEYFRAMES)
+# ---------------------------------------------------------
+
+# --- ANIMANDO OBJETO 2D (Quadrado: Translação + Rotação) ---
+bpy.context.scene.frame_set(1)
+quadrado.location = (-3, 2, 0)
+quadrado.rotation_euler = (0, 0, 0)
+quadrado.keyframe_insert(data_path="location", index=-1)
+quadrado.keyframe_insert(data_path="rotation_euler", index=-1)
+
+bpy.context.scene.frame_set(120)
+quadrado.location = (-1, 2, 0)
+quadrado.rotation_euler = (0, 0, math.radians(180))
+quadrado.keyframe_insert(data_path="location", index=-1)
+quadrado.keyframe_insert(data_path="rotation_euler", index=-1)
+
+
+# --- ANIMANDO OBJETO 3D (Cubo: Rotação e Escala em múltiplos eixos) ---
+bpy.context.scene.frame_set(1)
+cubo.rotation_euler = (0, 0, 0)
+cubo.scale = (1.0, 1.0, 1.0)
+cubo.keyframe_insert(data_path="rotation_euler", index=-1)
+cubo.keyframe_insert(data_path="scale", index=-1)
+
+bpy.context.scene.frame_set(60)
+cubo.rotation_euler = (math.radians(45), math.radians(30), 0)
+cubo.scale = (1.5, 0.8, 1.2)
+cubo.keyframe_insert(data_path="rotation_euler", index=-1)
+cubo.keyframe_insert(data_path="scale", index=-1)
+
+bpy.context.scene.frame_set(120)
+cubo.rotation_euler = (math.radians(90), math.radians(60), math.radians(45))
+cubo.scale = (0.8, 1.5, 2.0)
+cubo.keyframe_insert(data_path="rotation_euler", index=-1)
+cubo.keyframe_insert(data_path="scale", index=-1)
+
+# Retorna a linha do tempo para o frame 1
+bpy.context.scene.frame_set(1)
+
+print("Cena gerada com o círculo preenchido!")
