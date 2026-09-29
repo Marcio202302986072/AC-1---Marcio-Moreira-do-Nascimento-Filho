@@ -1,1 +1,11 @@
-Para a criação do "Parque Geométrico", utilizei transformações 2D (translação no plano XY, rotação no eixo Z e escala) nos objetos planos (obj2d_quadrado, obj2d_triangulo e obj2d_circulo) mantendo o eixo Z nulo. Nos objetos 3D (obj3d_cubo, obj3d_cilindro e obj3d_esfera), apliquei translação, rotação e escala de forma triaxial (eixos X, Y e Z), como a escala assimétrica e rotações combinadas em eixos distintos. A geração de todos os objetos básicos, a organização na coleção AC03_transformacoes, o alinhamento inicial e a conversão de graus em radianos foram feitos via script Python. As animações com keyframes (frames 1, 60 e 120), o ajuste da câmera e a vinculação hierárquica (parenting do círculo no cilindro para transformação composta) foram finalizados manualmente pela interface.
+AC03 - Parque Geométrico: Relatório Explicativo
+
+Nesta atividade, automatizei 100% da criação da cena, transformações e animações via script Python no Blender 4.5 LTS.
+
+Transformações Aplicadas:
+- Objetos 2D (Plano XY): Apliquei translação no plano XY, rotação no eixo Z e escala nos objetos 'obj2d_quadrado', 'obj2d_triangulo' e 'obj2d_circulo'. O círculo foi criado com preenchimento tipo NGON para garantir sua visualização como superfície plana.
+- Objetos 3D (Espaço Triaxial): Apliquei translação, rotação e escala assimétrica nos três eixos principais (X, Y e Z) nos objetos 'obj3d_cubo', 'obj3d_cilindro' e 'obj3d_esfera'.
+
+Divisão entre Automação e Interface:
+- Via Python: Criação de todos os objetos 2D e 3D, organização na coleção 'AC03_transformacoes', conversão de ângulos de graus para radianos (math.radians), aplicação da hierarquia parent/child entre o círculo e o cilindro (bônus), e gravação automática de keyframes nos frames 1, 60 e 120 para as animações do quadrado e do cubo.
+- Via Interface Manual: Posicionamento final da câmera, validação da reprodução na Timeline e renderização da imagem estática final.
